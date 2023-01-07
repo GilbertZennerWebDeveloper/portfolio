@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        margin: 0px;
+        background-color: wheat;
+      }
+      .stash-chunk {
+        margin: 2px;
+      }
+      .chunk {
+        margin: 0px;
+      }
+      #upper-interface {
+        display: flex;
+        width: 100%;
+        height: 400px;
+      }
+      #constructionCanvas {
+        background-color: aliceblue;
+        border: black solid;
+        width: 300px;
+        height: 400px;
+        display: grid;
+        grid-template-columns: repeat(1fr, 3);
+        grid-template-rows: repeat(1fr, 3);
+        grid-template-areas:
+          "c1 c2 c3"
+          "c4 c5 c6"
+          "c7 c8 c9";
+      }
+      #constructionCanvas > .constructionSpace {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 id="messages"></h1>
+    <div id="upper-interface">
+      <img id="fullImage" width="300" height="400" />
+      <div id="constructionCanvas">
+        <!--
+        <div id="c0" class="constructionSpace">0</div>
+        <div id="c1" class="constructionSpace">1</div>
+        <div id="c2" class="constructionSpace">2</div>
+        <div id="c3" class="constructionSpace">3</div>
+        <div id="c4" class="constructionSpace">4</div>
+        <div id="c5" class="constructionSpace">5</div>
+        <div id="c6" class="constructionSpace">6</div>
+        <div id="c7" class="constructionSpace">7</div>
+        <div id="c8" class="constructionSpace">8</div>
+        -->
+      </div>
+    </div>
+    <script>
+      let selectedIndex = 0;
+      let chunk_index = 0;
+      let preset_rows = 1;
+      let preset_cols = 1;
+      const imageSrc = "puzzle1.jpg";
+
+      const fullImage = document.getElementById("fullImage");
+      fullImage.src = imageSrc;
+
+      const messageWindow = document.getElementById("messages");
+
+      const constructionCanvas = document.getElementById("constructionCanvas");
+      for (let i = 0; i < preset_cols * preset_rows; i++) {
+        const constructionSpace = document.createElement("div");
+        constructionSpace.setAttribute("id", "c" + i);
+        constructionSpace.setAttribute("class", "constructionSpace");
+        constructionSpace.textContent = i;
+        constructionSpace.style.color = "white";
+        constructionSpace.style.border = "black dashed";
+        constructionCanvas.appendChild(constructionSpace);
+      }
+
+      const constructionSpaces =
+        document.getElementsByClassName("constructionSpace");
+
+      const image = new Image();
+      image.src = imageSrc;
+      image.onload = function () {
+        const imageHeight = image.naturalHeight;
+        const imageWidth = image.naturalWidth;
+        const rows = preset_rows;
+        const cols = preset_cols;
+        const chunkWidth = imageWidth / cols;
+        const chunkHeight = imageHeight / rows;
+
+        for (let x = 0; x < rows; x++) {
+          for (let y = 0; y < cols; y++) {
+            const canvas = document.createElement("canvas");
+            const chunkId = document.createElement("div");
+            canvas.setAttribute("id", "chunk" + chunk_index);
+            chunkId.textContent = chunk_index;
+            chunk_index++;
+            canvas.addEventListener("click", function () {
+              selectedIndex = parseInt(chunkId.textContent);
+              messageWindow.textContent = selectedIndex;
+            });
+            chunkId.style.display = "none";
+            canvas.setAttribute("class", "stash-chunk");
+            canvas.width = chunkWidth;
+            canvas.height = chunkHeight;
+            const context = canvas.getContext("2d");
+            context.drawImage(
+              image,
+              y * chunkWidth,
+              x * chunkHeight,
+              chunkWidth,
+              chunkHeight,
+              0,
+              0,
+              chunkWidth,
+              chunkHeight
+            );
+            canvas.appendChild(chunkId);
+            document.body.appendChild(canvas);
+          }
+        }
+      };
+
+      let targetSquare;
+      let selectedChunk;
+      constructionCanvas.addEventListener("click", function (event) {
+        if (event.target.textContent == selectedIndex) {
+          selectedChunk = document.getElementById("chunk" + selectedIndex);
+          selectedChunk.classList.remove("stash-chunk");
+          selectedChunk.classList.add("chunk");
+          targetSquare = document.getElementById("c" + selectedIndex);
+          targetSquare.textContent = "";
+          targetSquare.style.border = "";
+          targetSquare.appendChild(selectedChunk);
+        }
+      });
+    </script>
+  </body>
+</html>
