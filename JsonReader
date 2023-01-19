@@ -1,0 +1,15 @@
+Coming Soon:
+
+Your problem:
+You need to read a spefic data from your API.
+But you don't want to spend time on figuring out the right path (data.title[1].img.size[2] etc...)
+
+Your solution:
+This small Js script does all the work for you.
+what do you get:
+An object like this:
+
+JSONDataPaths = {
+data1: "PathToData1",
+data2: "PathToData2",
+}
